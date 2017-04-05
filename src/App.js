@@ -5,6 +5,10 @@ import './App.css';
 
 class ListItem extends Component {
 
+  state = {
+    isSelected: false
+  };
+
   settings = {
     edit: false
   };
@@ -18,15 +22,24 @@ class ListItem extends Component {
     this.triggerChange();
   }
 
+  select() {
+    this.setState({ isSelected: !this.state.isSelected });
+  }
+
   render() {
     this.settings.edit = this.props.edit;
+    let isSelected = (this.state.isSelected) ? 'list-item selected' : 'list-item';
 
     return (
-      <li>
-        { this.props.name } ({ this.props.edit.toString() }) -
+      <li className={ isSelected } onClick={ this.select.bind(this) }>
+        <span className="text">
+          { this.props.name } ({ this.props.edit.toString() })
+        </span>
 
-        <button onClick={ this.toggleEditMode.bind(this) }> Edit </button>
-        <button onClick={ this.props.onRemove }> Remove </button>
+        <div className="buttons">
+          <button onClick={ this.toggleEditMode.bind(this) }> Edit </button>
+          <button onClick={ this.props.onRemove }> Remove </button>
+        </div>
       </li>
     );
   }
@@ -169,22 +182,25 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
         </div>
-        <div>
+        <div className="container">
+
+          <p className="left-nav">
+            <button onClick={ this.undoChange.bind(this) }> Undo </button>
+            <button onClick={ this.redoChange.bind(this) }> Redo </button>
+          </p>
           <ul>
             { ItemsList }
           </ul>
-        </div>
-        <p>
-          <button onClick={ this.addItem.bind(this) }> Add Item </button>
-          <button onClick={ this.clearList.bind(this) }> Clear List </button>
-        </p>
 
-        <p>
-          <button onClick={ this.undoChange.bind(this) }> Undo </button>
-          <button onClick={ this.redoChange.bind(this) }> Redo </button>
-        </p>
+          <p>
+            <button onClick={ this.addItem.bind(this) }> Add Item </button>
+            <button onClick={ this.clearList.bind(this) }> Clear List </button>
+          </p>
+
+
+        </div>
+
       </div>
     );
   }
