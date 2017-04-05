@@ -4,23 +4,18 @@ import './App.css';
 
 
 class ListItem extends Component {
-  state = {
+
+  settings = {
     edit: false
-  }
+  };
 
-  componentDidMount() {
-    this.setState({ edit: this.props.edit });
-  }
-
-  setStateWithChange(values) {
-    this.setState(values);
-    this.props.onChange(this.state);
+  triggerChange() {
+    this.props.onChange(this.settings);
   }
 
   toggleEditMode() {
-    this.setStateWithChange({
-      edit: !this.state.edit
-    });
+    this.settings.edit = !this.settings.edit;
+    this.triggerChange();
   }
 
   render() {
@@ -28,7 +23,7 @@ class ListItem extends Component {
       <li>
         { this.props.name }
 
-        ({ this.state.edit.toString() }) -
+        ({ this.props.edit.toString() }) -
 
         <button onClick={ this.toggleEditMode.bind(this) }> Edit </button>
         <button onClick={ this.props.onRemove }> Remove </button>
@@ -60,8 +55,6 @@ class App extends Component {
     this.setState({
       past: past
     });
-
-    console.log(this.state);
   }
 
   cloneState(state) {
@@ -118,34 +111,40 @@ class App extends Component {
       itemsRemoved: 0,
       itemsAdded: 0
     });
-
-    console.log(this.state);
   }
 
   undoChange() {
     if (this.state.stateIndex > 0) {
-      console.log("undo");
-
       var stateIndex = this.state.stateIndex - 1;
-      // var stateBeforeUndo = this.state.present;
       var stateAfterUndo = this.cloneState(this.state.past[stateIndex]);
 
       this.setState({
         stateIndex: stateIndex,
         present: stateAfterUndo
       });
-
-      console.log(this.state);
     }
   }
 
   redoChange() {
+    if(this.state.stateIndex < this.state.past.length - 1) {
+      var stateIndex = this.state.stateIndex + 1;
+      var stateAfterRedo = this.cloneState(this.state.past[stateIndex]);
 
+      this.setState({
+        stateIndex: stateIndex,
+        present: stateAfterRedo
+      });
+    }
   }
 
-  listItemChanged(id, itemState) {
-    var item = this.state.present.items.find(item => item.id === id);
-    console.log(itemState);
+  listItemChanged(changedItem, itemState) {
+    var items = this.state.present.items;
+    var itemIndex = items.findIndex(item => item.id === changedItem.id);
+    items[itemIndex] = Object.assign(items[itemIndex], itemState);
+
+    this.setTimeState({
+      items: items
+    });
   }
 
   getListItem(item, i) {
