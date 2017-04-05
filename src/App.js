@@ -19,6 +19,8 @@ class ListItem extends Component {
   }
 
   render() {
+    this.settings.edit = this.props.edit;
+
     return (
       <li>
         { this.props.name } ({ this.props.edit.toString() }) -
