@@ -6,39 +6,85 @@ import './App.css';
 class ListItem extends Component {
 
   state = {
-    isSelected: false
+    name: "",
+    isSelected: false,
+    edit: false
   };
 
   settings = {
-    edit: false
+    name: "",
+    edit: false,
+    selected: false
   };
+
+  componentDidMount() {
+    this.setState({
+      name: this.props.name,
+      edit: this.props.edit
+    });
+  }
 
   triggerChange() {
     this.props.onChange(this.settings);
   }
 
   toggleEditMode() {
+    this.setState({
+      edit: !this.settings.edit
+    });
+
     this.settings.edit = !this.settings.edit;
     this.triggerChange();
   }
 
   select() {
-    this.setState({ isSelected: !this.state.isSelected });
+    var selected = !this.state.isSelected;
+    this.setState({ isSelected: selected });
+    this.settings.selected = selected;
+
+    this.triggerChange();
+  }
+
+  nameChanged(e) {
+    this.setState({
+      name: e.target.value,
+      edit: false
+    });
+
+    this.settings.edit = false;
+    this.settings.name = e.target.value;
+    this.triggerChange();
   }
 
   render() {
     this.settings.edit = this.props.edit;
-    let isSelected = (this.state.isSelected) ? 'list-item selected' : 'list-item';
+    this.settings.name = this.props.name;
+
+    let isSelected = (this.props.selected) ? 'list-item selected' : 'list-item';
+
+    var itemText = (
+      <div className="item-text">
+        { this.props.name } ({ this.state.edit.toString() })
+      </div>
+    );
+
+    var itemInput = (
+      <div className="item-input">
+        <input type="text" onBlur={ this.nameChanged.bind(this) } defaultValue={ this.state.name }/>
+      </div>
+    );
 
     return (
-      <li className={ isSelected } onClick={ this.select.bind(this) }>
+      <li className={ isSelected }>
+        <div className="select-area" onClick={ this.select.bind(this) }></div>
+
         <span className="text">
-          { this.props.name } ({ this.props.edit.toString() })
+          { (this.state.edit || this.settings.edit) ? itemInput : itemText }
         </span>
 
         <div className="buttons">
-          <button onClick={ this.toggleEditMode.bind(this) }> Edit </button>
-          <button onClick={ this.props.onRemove }> Remove </button>
+          <button className="btn-success" onClick={ this.toggleEditMode.bind(this) }> { (!this.state.edit) ? 'Edit' : 'Save' }  </button>
+          <button className="btn-danger" onClick={ this.props.onRemove }> Remove </button>
         </div>
       </li>
     );
@@ -54,7 +100,8 @@ class App extends Component {
     present: {
       items:[],
       itemsRemoved: 0,
-      itemsAdded: 0
+      itemsAdded: 0,
+      itemsSelected: 0,
     },
 
     past: [],
@@ -95,7 +142,8 @@ class App extends Component {
     items.push({
       id: id,
       name: "Item " + id,
-      edit: false
+      edit: false,
+      selected: false
     });
 
     this.setState({
@@ -159,8 +207,10 @@ class App extends Component {
     items[itemIndex] = Object.assign(items[itemIndex], itemState);
 
     this.setTimeState({
+      itemsSelected: items.filter(item => item.selected === true).length,
       items: items
     });
+
   }
 
   getListItem(item, i) {
@@ -168,6 +218,7 @@ class App extends Component {
       <ListItem key={ i }
                 name={ item.name }
                 edit={ item.edit }
+                selected={ item.selected }
                 onRemove={ this.removeItem.bind(this, item) }
                 onChange={ this.listItemChanged.bind(this, item) }
       >
@@ -176,7 +227,16 @@ class App extends Component {
   }
 
   render() {
-    var ItemsList = this.state.present.items.map((item, i) => this.getListItem(item, i));
+
+    var ItemsList;
+
+    if (this.state.present.items.length > 0) {
+      ItemsList = this.state.present.items.map((item, i) => this.getListItem(item, i));
+    } else {
+      ItemsList = (
+        <li className="empty-list"> No items added </li>
+      );
+    }
 
     return (
       <div className="App">
@@ -185,10 +245,15 @@ class App extends Component {
         </div>
         <div className="container">
 
-          <p className="left-nav">
+          <div className="left-nav">
             <button onClick={ this.undoChange.bind(this) }> Undo </button>
             <button onClick={ this.redoChange.bind(this) }> Redo </button>
-          </p>
+
+            { this.state.present.items.length > 0 && this.state.present.itemsSelected > 0 && (
+              <div className="total-items"> { this.state.present.itemsSelected } items selected </div>
+            )}
+
+          </div>
           <ul>
             { ItemsList }
           </ul>

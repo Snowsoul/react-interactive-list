@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .App {
   text-align: center;
 }
@@ -9,7 +13,7 @@
 
 .App-header {
   background-color: #222;
-  height: 100px;
+  height: 150px;
   padding: 20px;
   color: white;
 }
@@ -24,14 +28,17 @@
 }
 
 ul {
-  padding-left: 0px;
+  padding: 0px 15px;
+  float: left;
+  margin-top: 0px;
+  width: 100%;
 }
 
 li {
   list-style: none;
   padding: 15px;
   background: #ebebeb;
-  margin: 15px;
+  margin: 15px 0px;
 }
 
 button {
@@ -42,25 +49,42 @@ button {
   color: #fff;
   font-family: sans-serif;
   border: 0;
+  outline: none;
+}
+
+button:hover {
+  opacity: 0.8;
 }
 
 .list-item {
   cursor: pointer;
-  overflow: auto;
+  position: relative;
+  float: left;
+  width: 100%;
+  transition: background 0.3s;
 }
 
 .list-item.selected {
-  background: #ffd3a1;
-  border-bottom: 1px solid #222;
+  background: #238fad;
+  border-bottom: 5px solid #05576d;
+  color: #fff;
 }
 
 .text {
   float: left;
   line-height: 45px;
+  position: relative;
+  z-index: 2;
 }
 
 .buttons {
   float: right;
+  position: relative;
+  z-index: 2;
+}
+
+.left-nav > button {
+  background: #6d7cd4;
 }
 
 .container {
@@ -71,4 +95,38 @@ button {
 .left-nav {
   padding-left: 10px;
   text-align: left;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.empty-list {
+  padding: 40px 15px;
+}
+
+.select-area {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.btn-danger {
+  background: #ea5353;
+}
+
+.btn-success {
+  background: #93d859;
+}
+
+.total-items {
+  text-align: right;
+  float: right;
+  line-height: 45px;
+  padding-right: 10px;
+}
+
+.item-input > input {
+  padding: 10px;
+  font-size: 13px;
+  color: #615f5f;
 }
