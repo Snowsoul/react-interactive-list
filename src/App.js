@@ -46,7 +46,7 @@ class App extends Component {
 
     past: [],
     future: []
-  }
+  };
 
   componentDidMount() {
     var past = this.state.past;
@@ -68,7 +68,6 @@ class App extends Component {
     var presentState = this.cloneState(newState);
     past.push(this.cloneState(presentState));
 
-
     this.setState({
       present: presentState,
       past: past,
@@ -86,10 +85,14 @@ class App extends Component {
       edit: false
     });
 
-    this.setTimeState({
-      items: items,
-      itemsAdded: this.state.present.itemsAdded + 1
-    });
+    this.setState({
+      stateIndex: this.state.past.length - 1
+    }, function() {
+      this.setTimeState({
+        items: items,
+        itemsAdded: this.state.present.itemsAdded + 1
+      });
+    }.bind(this));
   }
 
   removeItem(itemToRemove) {
