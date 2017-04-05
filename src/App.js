@@ -21,9 +21,7 @@ class ListItem extends Component {
   render() {
     return (
       <li>
-        { this.props.name }
-
-        ({ this.props.edit.toString() }) -
+        { this.props.name } ({ this.props.edit.toString() }) -
 
         <button onClick={ this.toggleEditMode.bind(this) }> Edit </button>
         <button onClick={ this.props.onRemove }> Remove </button>
